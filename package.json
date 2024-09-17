@@ -2,15 +2,19 @@
   "name": "countdown-timer-react-ts",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://marianoa.github.io/countdown-timer-react-ts",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "vite build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "countdown-timer-react-ts": "file:",
+    "gh-pages": "^6.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
