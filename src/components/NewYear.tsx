@@ -23,10 +23,12 @@ export const NewYear = () => {
   const minutes = Math.floor((diffSec % 3600) / 60);
   const seconds = diffSec % 60;
 
+  const year = target.getFullYear(); // de tu hook o cálculo actual
+  const titulo = `Rumbo a ${year} en..`;
   return (
     <div className="justify-center items-center p-5">
       <h2 className="text-5xl font-semibold text-center pb-4">
-        Cuenta Regresiva para Año Nuevo
+        {titulo}
       </h2>
 
       <div className="coundown-container flex gap-4 justify-center items-center">
