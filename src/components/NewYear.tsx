@@ -25,9 +25,10 @@ export const NewYear = () => {
 
   const year = target.getFullYear(); // de tu hook o cálculo actual
   const titulo = `Rumbo a ${year} en..`;
+
   return (
     <div className="justify-center items-center p-5">
-      <h2 className="text-5xl font-semibold text-center pb-4">
+      <h2 aria-live="polite" className="text-5xl font-extrabold tracking-tight leading-tight text-center pb-4">
         {titulo}
       </h2>
 
