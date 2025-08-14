@@ -1,42 +1,31 @@
 import { useEffect, useState } from "react";
 
-
 /**
- * 
- * @param  inialTime initial countdown timer in ms
- * @param  callback function to execute when timer reaches 0  
- * @param  interval interval option in ms
+ * @param initialTime  tiempo inicial en segundos (no ms)
+ * @param callback     se ejecuta al llegar a 0
+ * @param intervalMs   intervalo en ms (default 1000)
  */
+export const useCountdown = (
+  initialTime: number,
+  callback: () => void,
+  intervalMs: number = 1000
+) => {
+  const [timer, setTimer] = useState<number>(initialTime);
 
-
-
-export const useCountdown = ( inialTime: number,  callback: () => void, interval: number =1000) => {
-
-  const [timer, setTimer] = useState(inialTime);
-
-  console.log('timer = ' + timer)
-
+  // si cambia el initialTime desde fuera, sincroniza estado
+  useEffect(() => setTimer(initialTime), [initialTime]);
 
   useEffect(() => {
-    const customInterval = setInterval(() => {
-     if(timer > 0){
-       setTimer((prev) => prev - 1)
-     } else {
-       callback() 
-      setTimer(inialTime)
-     }
-      
-      
-    
+    const id = setInterval(() => {
+      setTimer((prev) => {
+        if (prev > 1) return prev - 1;
+        // llega a 0
+        callback();
+        return initialTime;
+      });
+    }, intervalMs);
+    return () => clearInterval(id);
+  }, [callback, initialTime, intervalMs]);
 
-    }, interval);
-    
-   return () => clearInterval(customInterval)
-  }, [timer, inialTime, callback, interval]);
-
-
-  
-  
- return timer
-  
-}
+  return timer;
+};
