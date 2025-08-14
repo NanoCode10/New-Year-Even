@@ -30,7 +30,7 @@ export const NewYear = () => {
   return (
     <>
 
-      <div className="justify-center items-center p-10 mt-12">
+      <div className="justify-center items-center p-5">
 
         <h2 className="text-5xl font-semibold text-center pb-4">
           {" "}
