@@ -14,7 +14,7 @@ const App: FC = () => {
 
 const Content = () => {
   return (
-    <div className="relative z-10 flex h-screen items-end justify-center text-white pb-20">
+    <div className="relative z-10 flex h-screen items-center justify-center text-white pb-20">
 
       <NewYear />
     </div>
