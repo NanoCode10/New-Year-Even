@@ -33,14 +33,33 @@ server {
   root /usr/share/nginx/html;
   index index.html;
 
+  # SPA: no cachear HTML para que siempre se sirva la última build
+  location = /index.html {
+    add_header Cache-Control "no-store";
+    try_files /index.html =404;
+  }
+
+  # Juego: no cachear su HTML para reflejar cambios inmediatamente
+  location = /juego/index.html {
+    add_header Cache-Control "no-store";
+    try_files /juego/index.html =404;
+  }
+
+  # Assets de /juego/ SIN hash → no cachear (usar ?v=COMMIT en HTML)
+  location ~* ^/juego/.*\.(css|js)$ {
+    add_header Cache-Control "no-cache, must-revalidate";
+    try_files $uri =404;
+  }
+
+  # SPA fallback (Vite/React)
   location / {
     try_files $uri $uri/ /index.html;
   }
 
-  # Archivos estáticos con cache
+  # Assets hasheados de Vite en /assets/ → cache largo e immutable
   location ~* \.(ico|css|js|gif|jpe?g|png|svg|webp|woff2?)$ {
     expires 7d;
-    add_header Cache-Control "public";
+    add_header Cache-Control "public, max-age=604800, immutable";
     try_files $uri =404;
   }
 }
