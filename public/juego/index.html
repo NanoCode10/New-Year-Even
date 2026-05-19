@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NanoCode Dash</title>
+    <script>
+      try {
+        if (window.localStorage.getItem("newyear-theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="route-loader" aria-hidden="true">
+      <div class="route-loader-mark">
+        <img src="mascota.png" alt="" />
+      </div>
+    </div>
+
+    <div class="game-shell">
+      <header class="game-topbar">
+        <a class="back-link" href="../" aria-label="Volver a la cuenta regresiva">
+          <span>←</span>
+        </a>
+
+        <div class="game-intro">
+          <span class="game-kicker">
+            <span class="game-kicker-default">Modo juego</span>
+            <span class="game-kicker-hover">Juega ya!</span>
+          </span>
+          <h1>NanoCode Dash</h1>
+        </div>
+
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema">
+          <span class="theme-icon" aria-hidden="true">☀</span>
+        </button>
+      </header>
+
+      <div id="game-container">
+        <canvas id="game"></canvas>
+
+        <div id="ui">
+          <div id="score-display">
+            <span id="score">0</span>
+          </div>
+          <div id="best-display">
+            BEST: <span id="best">0</span>
+          </div>
+          <div id="combo-display" class="combo-hidden">
+            x1 FLOW
+          </div>
+          <div id="sound-toggle">
+            <span id="sound-icon">🔊</span>
+          </div>
+        </div>
+
+        <button id="action-btn" aria-label="Saltar o dash">TAP</button>
+
+        <div id="menu" class="screen active">
+          <div class="instructions">
+            <p>Presioná <span class="key">ESPACIO</span> o <span class="key">CLICK</span> para saltar</p>
+            <p>En el aire, volvé a presionar para hacer dash e ignorar un golpe</p>
+            <p>Presioná <span class="key">R</span> para reiniciar al instante</p>
+            <p>En celular podés usar el botón <span class="key">TAP</span></p>
+          </div>
+          <button id="start-btn" class="neon-btn">Jugar</button>
+          <div class="best-score">
+            Mejor puntaje: <span id="menu-best">0</span>
+          </div>
+        </div>
+
+        <div id="game-over" class="screen">
+          <h1>Game Over</h1>
+          <p class="score-final">Puntaje: <span id="final-score">0</span></p>
+          <p class="new-record" id="new-record" style="display: none">¡Nuevo récord!</p>
+          <button id="restart-btn" class="neon-btn">Reintentar</button>
+          <button id="menu-btn" class="neon-btn secondary">Menú</button>
+        </div>
+      </div>
+
+      <div class="game-notes">
+        <span>Tip: el dash te salva de un golpe en el aire.</span>
+      </div>
+    </div>
+
+    <script>
+      window.addEventListener("load", () => {
+        requestAnimationFrame(() => {
+          document.body.classList.add("is-ready");
+          window.dispatchEvent(new Event("resize"));
+          window.setTimeout(() => {
+            window.dispatchEvent(new Event("resize"));
+          }, 980);
+        });
+      });
+
+      const backLink = document.querySelector(".back-link");
+      const themeToggle = document.querySelector(".theme-toggle");
+      const themeIcon = document.querySelector(".theme-icon");
+
+      const setTheme = (theme) => {
+        document.documentElement.setAttribute("data-theme", theme);
+        themeIcon.textContent = theme === "light" ? "☾" : "☀";
+        themeToggle.setAttribute(
+          "aria-label",
+          theme === "light" ? "Cambiar a modo oscuro" : "Cambiar a modo claro"
+        );
+        try {
+          window.localStorage.setItem("newyear-theme", theme);
+        } catch {
+          // localStorage can be unavailable in restricted browser modes.
+        }
+      };
+
+      setTheme(
+        document.documentElement.getAttribute("data-theme") === "light"
+          ? "light"
+          : "dark"
+      );
+
+      themeToggle?.addEventListener("click", () => {
+        setTheme(
+          document.documentElement.getAttribute("data-theme") === "light"
+            ? "dark"
+            : "light"
+        );
+      });
+
+      backLink?.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (document.body.classList.contains("is-leaving")) {
+          return;
+        }
+
+        document.body.classList.add("is-leaving");
+        window.setTimeout(() => {
+          window.location.assign(backLink.href);
+        }, 660);
+      });
+    </script>
+    <script src="game.js"></script>
+  </body>
+</html>

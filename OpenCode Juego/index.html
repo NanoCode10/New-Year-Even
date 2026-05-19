@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Dash</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game"></canvas>
+        <div id="ui">
+            <div id="score-display">
+                <span id="score">0</span>
+            </div>
+            <div id="best-display">
+                BEST: <span id="best">0</span>
+            </div>
+            <div id="combo-display" class="combo-hidden">
+                x1 FLOW
+            </div>
+            <div id="sound-toggle">
+                <span id="sound-icon">🔊</span>
+            </div>
+        </div>
+        <button id="action-btn" aria-label="Saltar o dash">TAP</button>
+        <div id="menu" class="screen active">
+            <h1>NEON DASH</h1>
+            <div class="instructions">
+                <p>Presiona <span class="key">ESPACIO</span> o <span class="key">CLICK</span> para saltar</p>
+                <p>En el aire, volvé a presionar para hacer dash e ignorar un golpe</p>
+                <p>Presioná <span class="key">R</span> para reiniciar al instante</p>
+                <p>En celular podés usar el botón <span class="key">TAP</span></p>
+            </div>
+            <button id="start-btn" class="neon-btn">JUGAR</button>
+            <div class="best-score">
+                Mejor puntaje: <span id="menu-best">0</span>
+            </div>
+        </div>
+        <div id="game-over" class="screen">
+            <h1>GAME OVER</h1>
+            <p class="score-final">Puntaje: <span id="final-score">0</span></p>
+            <p class="new-record" id="new-record" style="display:none">¡NUEVO RÉCORD!</p>
+            <button id="restart-btn" class="neon-btn">REINTENTAR</button>
+            <button id="menu-btn" class="neon-btn secondary">MENÚ</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

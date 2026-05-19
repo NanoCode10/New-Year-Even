@@ -1,53 +1,176 @@
-import { FC } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import "./App.css";
 import { NewYear } from "./components/NewYear";
 
+const THEME_STORAGE_KEY = "newyear-theme";
+const SOUND_STORAGE_KEY = "newyear-sound";
+
+const MusicOnIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    focusable="false"
+    className="control-icon"
+  >
+    <path
+      d="M9 17.5a2 2 0 1 1-2-2c.42 0 .8.13 1.1.34V7.5l8-1.5v8.5a2 2 0 1 1-1-1.72V7.2l-6 1.12V17.5Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+const MusicOffIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    focusable="false"
+    className="control-icon"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+    />
+    <path
+      d="M10 16.9a1.7 1.7 0 1 1-1.7-1.7c.29 0 .56.07.8.2V9.1l5.9-1.14v5.98a1.7 1.7 0 1 1-.9-1.5V9.04l-4.1.8v7.06Z"
+      fill="currentColor"
+    />
+    <path
+      d="M6.2 6.2 17.8 17.8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 const App: FC = () => {
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return storedTheme === "light" ? "light" : "dark";
+  });
+  const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(() => {
+    return window.localStorage.getItem(SOUND_STORAGE_KEY) !== "off";
+  });
+  const audioContextRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      document.body.classList.add("home-ready");
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      document.body.classList.remove("home-ready", "home-leaving");
+    };
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      SOUND_STORAGE_KEY,
+      isSoundEnabled ? "on" : "off"
+    );
+
+    const context = audioContextRef.current;
+    if (!context) {
+      return;
+    }
+
+    if (!isSoundEnabled && context.state === "running") {
+      void context.suspend();
+    }
+  }, [isSoundEnabled]);
+
+  const playSoftTick = () => {
+    if (!isSoundEnabled) {
+      return;
+    }
+
+    const context =
+      audioContextRef.current ??
+      new window.AudioContext();
+
+    audioContextRef.current = context;
+    if (context.state === "suspended") {
+      void context.resume();
+    }
+
+    const now = context.currentTime;
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(520, now);
+    oscillator.frequency.exponentialRampToValueAtTime(440, now + 0.06);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.025, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+
+    oscillator.start(now);
+    oscillator.stop(now + 0.12);
+  };
+
   return (
-    <div className="App">
-      <Header />
-      <main className="relative z-10 flex min-h-[calc(100vh-120px)] items-center justify-center text-white pb-20">
-        <Content />
+    <div className="app-shell">
+      <BackgroundFX />
+      <header className="topbar">
+        <div className="controls">
+          <button
+            className="control-btn icon-btn"
+            type="button"
+            onClick={() =>
+              setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+            }
+            aria-label="Cambiar tema"
+          >
+            {theme === "dark" ? "☀" : "☾"}
+          </button>
+          <button
+            className="control-btn icon-btn"
+            type="button"
+            onClick={() => setIsSoundEnabled((prev) => !prev)}
+            aria-label={
+              isSoundEnabled ? "Silenciar sonido" : "Activar sonido"
+            }
+            title={isSoundEnabled ? "Silenciar sonido" : "Activar sonido"}
+          >
+            {isSoundEnabled ? <MusicOnIcon /> : <MusicOffIcon />}
+          </button>
+        </div>
+      </header>
+
+      <main className="hero-stage">
+        <NewYear onSecondTick={playSoftTick} />
       </main>
     </div>
   );
 };
 
-const Header = () => {
-  // Elegí UNO de los gradientes de abajo y pegalo en `GRADIENTE_AQUI`
-  const gradient =
-    // 1) Violeta intenso
-    "bg-gradient-to-r from-violet-300 via-fuchsia-400 to-rose-400";
-  // 2) Rojo fuego
-  // "bg-gradient-to-r from-rose-300 via-red-500 to-orange-400";
-  // 3) Magenta eléctrico
-  // "bg-gradient-to-r from-fuchsia-300 via-pink-500 to-rose-400";
-  // 4) Morado -> Cian (alto contraste)
-  // "bg-gradient-to-r from-purple-300 via-violet-400 to-cyan-300";
-
+const BackgroundFX = () => {
+  const particles = Array.from({ length: 18 }, (_, index) => index);
   return (
-    <header className="pt-10">
-      <div className="mx-auto max-w-5xl px-4 text-center">
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight">
-          <span
-            className={`${gradient} bg-clip-text text-transparent drop-shadow-[0_1px_10px_rgba(255,255,255,0.15)]`}
-          >
-            NanoCode10 Web App
-          </span>
-        </h1>
-        <div className="mx-auto mt-3 h-px w-64 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-        <p className="mt-3 text-sm sm:text-base text-white/70">
-          Proyectos • Dev • Infra • Linux
-        </p>
+    <div className="background-fx" aria-hidden="true">
+      <div className="vignette" />
+      <div className="nebula nebula-left" />
+      <div className="nebula nebula-right" />
+      <div className="particle-cloud">
+        {particles.map((particle) => (
+          <span key={particle} className="particle-dot" />
+        ))}
       </div>
-    </header>
-  );
-};
-
-const Content = () => {
-  return (
-    <div className="relative z-10">
-      <NewYear />
     </div>
   );
 };

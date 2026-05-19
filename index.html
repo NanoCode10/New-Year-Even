@@ -5,8 +5,135 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=10" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NanoCode10.Dev</title>
+    <script>
+      try {
+        if (window.localStorage.getItem("newyear-theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    </script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #030611;
+      }
+
+      html[data-theme="light"],
+      html[data-theme="light"] body {
+        background: #fffdfd;
+      }
+
+      #boot-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(8, 13, 30, 0.98), rgba(3, 6, 17, 0.98)),
+          radial-gradient(circle at 50% 24%, rgba(255, 91, 87, 0.18), transparent 28%);
+        color: #f5f7ff;
+        font: 800 0.78rem/1.2 "Segoe UI", sans-serif;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      html[data-theme="light"] #boot-loader {
+        background:
+          linear-gradient(180deg, rgba(255, 253, 253, 0.98), rgba(247, 251, 255, 0.98)),
+          radial-gradient(circle at 50% 24%, rgba(226, 56, 69, 0.14), transparent 28%);
+        color: #10172d;
+      }
+
+      #boot-loader::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform-origin: top;
+        background: linear-gradient(180deg, #ff6d73 0%, #111a34 48%, #030611 100%);
+        animation: bootLoaderSweep 1.08s cubic-bezier(0.76, 0, 0.24, 1) infinite alternate;
+      }
+
+      html[data-theme="light"] #boot-loader::before {
+        background: linear-gradient(180deg, #ffd6d9 0%, #ffffff 48%, #f4f8fc 100%);
+      }
+
+      .boot-loader-mark {
+        position: relative;
+        z-index: 1;
+        width: 96px;
+        height: 96px;
+        display: grid;
+        place-items: center;
+      }
+
+      .boot-loader-mark::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(from 90deg, rgba(255, 109, 115, 0) 0turn, #ff6d73 0.08turn, #89f0ff var(--loader-progress), rgba(255, 255, 255, 0.08) var(--loader-progress));
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+        filter: drop-shadow(0 0 18px rgba(255, 109, 115, 0.28));
+        animation: bootLoaderRing 1.08s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+      }
+
+      .boot-loader-mark img {
+        width: 46px;
+        height: 46px;
+        object-fit: contain;
+        filter:
+          drop-shadow(0 0 18px rgba(255, 109, 115, 0.42))
+          drop-shadow(0 12px 18px rgba(0, 0, 0, 0.28));
+        animation: bootMascotSpin 1.08s cubic-bezier(0.55, 0, 0.2, 1) infinite;
+      }
+
+      body.home-ready #boot-loader {
+        animation: bootLoaderExit 0.74s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+      }
+
+      @keyframes bootLoaderSweep {
+        from { transform: translateY(-72%); }
+        to { transform: translateY(72%); }
+      }
+
+      @keyframes bootLoaderExit {
+        to {
+          transform: translateY(100%);
+          visibility: hidden;
+        }
+      }
+
+      @property --loader-progress {
+        syntax: "<number>";
+        inherits: false;
+        initial-value: 1;
+      }
+
+      @keyframes bootLoaderRing {
+        0% { --loader-progress: 1; transform: rotate(0deg); }
+        100% { --loader-progress: 0.04; transform: rotate(360deg); }
+      }
+
+      @keyframes bootMascotSpin {
+        0% { transform: rotate(0deg) scale(0.92); }
+        58% { transform: rotate(300deg) scale(1.08); }
+        100% { transform: rotate(360deg) scale(0.92); }
+      }
+    </style>
   </head>
   <body>
+    <div id="boot-loader" aria-hidden="true">
+      <div class="boot-loader-mark">
+        <img src="/juego/mascota.png" alt="" />
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -1,27 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@500;700;800&display=swap");
+
+:root {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  line-height: 1.4;
+  font-weight: 400;
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 html,
-body {
+body,
+#root {
   margin: 0;
-  padding: 0;
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden; /* Opcional */
-  position: relative;
+  color: #f5fbff;
+  background: #05070f;
 }
 
-#root::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url("/imgs/background.jpg") no-repeat center center fixed;
-  background-size: cover;
-  filter: blur(8px);
-  z-index: -1; /* Coloca el fondo detrás del contenido */
+:root[data-theme="light"] body {
+  color: #10172d;
+  background: #f6fbff;
+}
+
+a {
+  color: inherit;
 }
